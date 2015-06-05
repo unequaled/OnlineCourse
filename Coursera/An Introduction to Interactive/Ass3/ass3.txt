@@ -1,0 +1,63 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+# CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
+# Some features may work in other browsers, but do not expect
+# full functionality.  It does NOT run in Internet Explorer.
+
+import simplegui
+
+startTime = 0
+win = 0
+click = 0
+
+def format(t):
+    ms = t % 10
+    t = t / 10
+    s = t % 60
+    t = t / 60
+    m = t    
+    if s < 10:
+        return str(m) + ":0" + str(s) + "." + str(ms)  
+    else:
+        return str(m) + ":" + str(s) + "." + str(ms) 
+
+# Handler for mouse click
+def Start_click():
+    timer.start()
+    
+def Stop_click():
+    global win,click
+    if timer.is_running():
+        if startTime % 10 == 0:
+            win += 1
+        click +=1
+        timer.stop()
+    
+def Reset_click():
+    global startTime,win,click
+    startTime = 0
+    win = 0
+    click = 0
+    timer.stop()
+    
+# Handler to draw on canvas
+def draw(canvas):
+    global click, win
+    canvas.draw_text(format(startTime), [100,120], 58, "White")
+    canvas.draw_text(str(win)+"/"+str(click), [250,28], 28, "White")
+    
+def timer_handler():
+    global startTime
+    startTime += 1
+
+# Create a frame and assign callbacks to event handlers
+frame = simplegui.create_frame("Home", 300, 200)
+frame.add_button("Start", Start_click)
+frame.add_button("Stop", Stop_click)
+frame.add_button("Reset", Reset_click)
+frame.set_draw_handler(draw)
+timer = simplegui.create_timer(100, timer_handler)
+
+# Start the frame animation
+frame.start()
